@@ -1,0 +1,839 @@
+// By: Radha Kotra
+// Written in Processing
+// Save the Turtle! game
+
+int fishX = -75; // the fish's x coordinate
+int fishWithBubblesX = -75; // the fish with bubbles' x coordinate
+int turtleX = -650; // the turtle's x coordinate
+int turtleY = 0; // the turtles y coordinate
+String state = "animation"; // this allows me to change to change the game state
+int up = 0; // these allow the user to move the turtle in different directions
+int left = 0; 
+int down = 0; 
+int right = 0;
+int positionX; //these allow me to detect collisions on different axis
+int positionY;
+String border; // this allows me to create a screen when the user crashes into a wall
+int score=0; // this keeps track of the score
+int offScreen = 800; // in the game of testing, this keeps track of how close the object is to the turtle
+int offScreenCounter = 1; // this makes the objects move faster as the user moves up the levels
+int positionChangeX = 150;
+int positionChangeY = 350;
+
+void setup() {
+  frameRate(100);
+  size(800, 500);
+  smooth();
+  noStroke();
+}
+
+void draw() {
+  println(millis());
+  myBackground();
+  //***ANIMATION***
+  fishWithBubblesX+=1;
+  if (fishX<700) { // this makes the fish move to the right of the screen
+    fishX+=2;
+  }
+  if (turtleX<=400) { // this makes the turtle move to the right of the screen
+    turtleX+=2;
+  } else if (turtleX>=400) { // this makes the turtle move down the screen
+    turtleY+=2;
+  }
+  if (turtleY==550) { // this runs the main menu as soon as the animation is over
+    state = "main menu";
+  }
+  //***STATE CHANGERS***
+  if (state.equals("animation")) { // this runs the animation
+    animatedAdventureIntro();
+  }
+  if (state.equals("main menu")) { // this runs the animation if you click on"HERE" in instructions
+    mainMenu();
+  }
+  if (state.equals("instructions")) { // this runs the instructions
+    instructions();
+  }
+  if (state.equals("maze of learning")) { // this runs the maze of learning
+    mazeOfLearning();
+  }
+  if (state.equals("learning station 1")) { // this runs the maze of learning
+    learningStation1();
+  }
+  if (state.equals("learning station 2")) { // this runs the maze of learning
+    learningStation2();
+  }
+  if (state.equals("learning station 3")) { // this runs the maze of learning
+    learningStation3();
+  }
+  if (state.equals("learning station 4")) { // this runs the maze of learning
+    learningStation4();
+  }
+  if (state.equals("learning station 5")) { // this runs the maze of learning
+    learningStation5();
+  }
+  if (state.equals("game of testing")) { // this runs the game of testing
+    gameOfTesting();
+  }
+  if (state.equals("goodbye")) { // this runs goodbye
+    goodbye();
+  }
+  //***MAZE OF LEARNING***
+  positionX=right+left; // these find out how much the turtle moved from its original position
+  positionY=down+up;
+  if (keyPressed) { // this allows the user to control the turtle's movements
+    if (key == CODED) {
+      if (keyCode==UP) {
+        if (state.equals("game of testing")) { // this makes the turtle move faster in the game of testing
+          up-=3;
+        } else {
+          up -=1;
+        }
+      }
+      if (keyCode==LEFT) {
+        left -=1;
+      }
+      if (keyCode==DOWN) {
+        if (state.equals("game of testing")) {// this makes the turtle move faster in the game of testing
+          down+=3;
+        }
+        down +=1;
+      }
+      if (keyCode==RIGHT) {
+        right +=1;
+      }
+    }
+  }
+  if (positionX > 55 && positionX < 110 && positionY > 135 && positionY < 170) { // this runs the first learning station
+    state = "learning station 1";
+  }
+  if (positionX > 295 && positionX < 375 && positionY > -65 && positionY < -30) { // this runs the second learning station
+    state = "learning station 2";
+  }
+  if (positionX > 445 && positionX < 470 && positionY > 50 && positionY < 100) { // this runs the third learning station
+    state = "learning station 3";
+  }
+  if (positionX > 463 && positionX < 520 && positionY > 235 && positionY < 270) { // this runs the fourth learning station
+    state = "learning station 4";
+  }
+  if (positionX > 640 && positionX < 670 && positionY > 165 && positionY < 205) { // this runs the last learning station
+    state = "learning station 5";
+  }
+  if (20+left+right==850) { // this changes the game state from the maze to game of testing soon after the user finishes the maze
+    state="game of testing";
+  }
+  //***GAME OF TESTING***
+  if (state.equals("game of testing")) {
+    if (offScreen==-800 || (offScreen == -798) || (offScreen == -801) ||(offScreen == -802)) {
+      offScreen+=1600;
+      offScreenCounter+=1;
+    } else {
+      offScreen-=offScreenCounter;
+    }
+  }
+  if (millis()>=75000) {
+    state = "goodbye";
+  }
+}
+
+void myBackground() {
+  background(0, 0, 255);
+  fill(125);
+  ellipse(650, 500, 350, 400); // this is the cave
+  fill(0);
+  ellipse(550, 500, 100, 200); // this is the entrance to the cave
+  if (turtleY<150) {
+    fill(200);
+    ellipse(550, 250, 50, 75); // this is the plastic bag
+    noFill();
+    strokeWeight(5);
+    stroke(200);
+    arc(550, 250, 45, 125, radians(180), radians(360)); // this is the handles of the plastic bag
+  }
+}
+
+void animatedAdventureIntro() { 
+  noStroke(); // this is the top fish
+  fill(0, 255, 255);
+  ellipse(fishX-150, 75, 100, 25); // this is the fish's body
+  triangle(fishX-225, 50, fishX-200, 75, fishX-225, 100); // this is the fish's tail
+  fill(0, 0, 255);
+  triangle(fishX-150, 75, fishX-150, 80, fishX-170, 75); // this is the fish's fin
+  noStroke();
+  fill(0);
+  ellipse(fishX-125, 70, 5, 5); // this is the fish's eye
+
+  noStroke(); // this is fish is just under the top fish
+  fill(0, 255, 255);
+  ellipse(fishX-50, 175, 100, 25); // this is the fish's body
+  triangle(fishX-125, 150, fishX-100, 175, fishX-125, 200); // this is the fish's tail
+  fill(0, 0, 255);
+  triangle(fishX-50, 175, fishX-50, 180, fishX-70, 175); // this is the fish's fin
+  noStroke();
+  fill(0);
+  ellipse(fishX-25, 170, 5, 5); // this is the fish's eye
+
+  noStroke(); // this is the third fish down from the top of the screen
+  fill(0, 255, 255);
+  ellipse(fishX-150, 75, 100, 25); // this is the fish's body
+  triangle(fishX-225, 50, fishX-200, 75, fishX-225, 100); // this is the fish's tail
+  fill(0, 0, 255);
+  triangle(fishX-150, 75, fishX-150, 80, fishX-170, 75); // this is the fish's fin
+  noStroke();
+  fill(0);
+  ellipse(fishX-125, 70, 5, 5); // this is the fish's eye
+
+  noStroke(); // this is the top fish that has bubbles
+  fill(0, 255, 255);
+  ellipse(fishWithBubblesX-250, 275, 100, 25); // this is the fish's body
+  triangle(fishWithBubblesX-325, 250, fishWithBubblesX-300, 275, fishWithBubblesX-325, 300); // this is the fish's tail
+  fill(0, 0, 255);
+  triangle(fishWithBubblesX-250, 275, fishWithBubblesX-250, 280, fishWithBubblesX-270, 275); // this is the fish's fin
+  noStroke();
+  fill(0);
+  ellipse(fishWithBubblesX-225, 270, 5, 5); // this is the fish's eye
+
+  noStroke(); // this is the fish with three bubbles
+  fill(0, 255, 255);
+  ellipse(fishWithBubblesX-400, 325, 100, 25); // this is the fish's body
+  triangle(fishWithBubblesX-475, 300, fishWithBubblesX-450, 325, fishWithBubblesX-475, 350); // this is the fish's tail
+  fill(0, 0, 255);
+  triangle(fishWithBubblesX-400, 325, fishWithBubblesX-400, 320, fishWithBubblesX-420, 325); // this is the fish's fin
+  noStroke();
+  fill(0);
+  ellipse(fishWithBubblesX-375, 320, 5, 5); // this is the fish's eye
+
+  noStroke(); // this is the fish with one bubble
+  fill(0, 255, 255);
+  ellipse(fishWithBubblesX-500, 425, 100, 25); // this is the fish's body
+  triangle(fishWithBubblesX-575, 400, fishWithBubblesX-550, 425, fishWithBubblesX-575, 450); // this is the fish's tail
+  fill(0, 0, 255);
+  triangle(fishWithBubblesX-500, 425, fishWithBubblesX-500, 420, fishWithBubblesX-520, 425); // this is the fish's fin
+  noStroke();
+  fill(0);
+  ellipse(fishWithBubblesX-475, 420, 5, 5); // this is the fish's eye
+
+  fill(200, 250, 255); // these are the bubbles the bottom 3 fish have
+  ellipse(fishWithBubblesX-220, 230, 10, 10); // the top smaller bubble
+  ellipse(fishWithBubblesX-200, 250, 20, 20); // the bigger bubble right under the top smaller bubble
+
+  ellipse(fishWithBubblesX-345, 270, 10, 10); // the top and smallest bubble that the second lowest fish has
+  ellipse(fishWithBubblesX-365, 290, 15, 15); // the medium sized bubble
+  ellipse(fishWithBubblesX-345, 310, 20, 20); // the biggest bubble
+
+  ellipse(fishWithBubblesX-460, 400, 20, 20); // the only bubble the bottom fish has
+
+  if (turtleY>0) { // this is what 'erases' the first fish the turtle eats
+    fill(0, 0, 255);
+    rect(fishX-225, 50, 150, 50);
+  }
+  if (turtleY>=100) { // this is what 'erases' the second fish the turtle eats
+    fill(0, 0, 255);
+    rect(fishX-125, 150, 150, 50);
+  }
+
+  noStroke(); // this is the turtle
+  fill(0, 255, 0);
+  ellipse(150+turtleX, 75+turtleY, 200, 100); // this is the turtle's body
+  triangle(180+turtleX, 100+turtleY, 200+turtleX, 130+turtleY, 130+turtleX, 150+turtleY ); // this is the turtle's front fin
+  triangle(50+turtleX, 80+turtleY, 80+turtleX, 90+turtleY, 20+turtleX, 120+turtleY ); // this is the turtle's back fin
+  triangle(30+turtleX, 70+turtleY, 50+turtleX, 70+turtleY, 60+turtleX, 80+turtleY ); // this is the turtle's tail
+  fill(150, 50, 0); 
+  ellipse(150+turtleX, 70+turtleY, 200, 90); // this is the turtle's shell
+
+  noStroke(); //these are the top horizontal lines on the turtle's shell
+  fill(175, 60, 0);
+  beginShape();
+  vertex(50+turtleX, 65+turtleY);
+  vertex(90+turtleX, 80+turtleY);
+  vertex(130+turtleX, 85+turtleY);
+  vertex(170+turtleX, 85+turtleY);
+  vertex(210+turtleX, 80+turtleY);
+  vertex(250+turtleX, 65+turtleY);
+  vertex(240+turtleX, 90+turtleY);
+  vertex(215+turtleX, 100+turtleY);
+  vertex(175+turtleX, 110+turtleY);
+  vertex(125+turtleX, 110+turtleY);
+  vertex(80+turtleX, 100+turtleY);
+  endShape(CLOSE);
+
+  fill(125, 40, 0); // these are the bottom horizontal lines on the turtle's shell
+  beginShape();
+  vertex(80+turtleX, 40+turtleY);
+  vertex(110+turtleX, 50+turtleY);
+  vertex(140+turtleX, 55+turtleY);
+  vertex(170+turtleX, 55+turtleY);
+  vertex(200+turtleX, 50+turtleY);
+  vertex(225+turtleX, 40+turtleY);
+  vertex(150+turtleX, 25+turtleY);
+  endShape(CLOSE);
+
+  strokeWeight(1); // these are the left-most lines on the turtle's shell
+  stroke(0);
+  line(50+turtleX, 65+turtleY, 90+turtleX, 80+turtleY);
+  line(90+turtleX, 80+turtleY, 130+turtleX, 85+turtleY);
+  line(130+turtleX, 85+turtleY, 170+turtleX, 85+turtleY);
+  line(170+turtleX, 85+turtleY, 210+turtleX, 80+turtleY);
+  line(210+turtleX, 80+turtleY, 250+turtleX, 65+turtleY);
+
+  line(80+turtleX, 40+turtleY, 110+turtleX, 50+turtleY); // these are the second to the left-most lines on the turtle's shell
+  line(110+turtleX, 50+turtleY, 140+turtleX, 55+turtleY);
+  line(140+turtleX, 55+turtleY, 170+turtleX, 55+turtleY);
+  line(170+turtleX, 55+turtleY, 200+turtleX, 50+turtleY);
+  line(200+turtleX, 50+turtleY, 225+turtleX, 40+turtleY);
+
+  line(150+turtleX, 25+turtleY, 105+turtleX, 50+turtleY); // these are the third to the left-most lines on the turtle's shell
+  line(105+turtleX, 50+turtleY, 85+turtleX, 80+turtleY);
+  line(85+turtleX, 80+turtleY, 80+turtleX, 100+turtleY);
+
+  line(150+turtleX, 25+turtleY, 135+turtleX, 55+turtleY); // these are the third to the right-most lines on the turtle's shell
+  line(135+turtleX, 55+turtleY, 125+turtleX, 85+turtleY);
+  line(125+turtleX, 85+turtleY, 125+turtleX, 110+turtleY);
+
+  line(150+turtleX, 25+turtleY, 170+turtleX, 55+turtleY); // these are the second to the right-most lines on the turtle's shell
+  line(170+turtleX, 55+turtleY, 175+turtleX, 85+turtleY);
+  line(175+turtleX, 85+turtleY, 175+turtleX, 110+turtleY);
+
+  line(150+turtleX, 25+turtleY, 200+turtleX, 50+turtleY); // these are the right-most lines on the turtle's shell
+  line(200+turtleX, 50+turtleY, 210+turtleX, 80+turtleY);
+  line(210+turtleX, 80+turtleY, 215+turtleX, 100+turtleY);
+
+  if (turtleX<150) { // this is what makes the turtle smile as he is chasing the fish
+    noStroke();
+    fill(0, 255, 0);
+    ellipse(270+turtleX, 75+turtleY, 70, 50); // this is the turtle's head
+    strokeWeight(1);
+    stroke(127);
+    line(275+turtleX, 80, 280+turtleX, 85);
+    line(280+turtleX, 85, 300+turtleX, 85);
+  } else { // this is what makes the turtle open his mouth as he eats the fish
+    noStroke();
+    fill(0, 255, 0);
+    arc(270+turtleX, 75+turtleY, 75, 50, radians(20), radians(340));
+  }
+  fill(0);
+  ellipse(260+turtleX, 70+turtleY, 15, 15); // this is the black part of the turtle's eye
+  fill(255);
+  ellipse(260+turtleX, 75+turtleY, 10, 5); // this is the white part of the turtle's eye
+  if (turtleY>=150) {
+    stroke(125);
+    strokeWeight(5);
+    fill(125);
+    ellipse(270+turtleX, 75+turtleY, 70, 50); // the plastic bag is on the turtle's head
+    noFill();
+    ellipse(235+turtleX, 75+turtleY, 70, 50);
+  }
+}
+
+void mainMenu() {
+  noStroke();
+  background(0, 0, 255);
+  PFont font;
+  font = loadFont("MVBoli-75.vlw");
+  textFont(font);
+
+  noStroke(); // this is the turtle
+  fill(0, 255, 0);
+  ellipse(150+positionChangeX, 75+positionChangeY, 200, 100); // this is the turtle's body
+  triangle(180+positionChangeX, 100+positionChangeY, 200+positionChangeX, 130+positionChangeY, 130+positionChangeX, 150+positionChangeY ); // this is the turtle's front fin
+  triangle(50+positionChangeX, 80+positionChangeY, 80+positionChangeX, 90+positionChangeY, 20+positionChangeX, 120+positionChangeY ); // this is the turtle's back fin
+  triangle(30+positionChangeX, 70+positionChangeY, 50+positionChangeX, 70+positionChangeY, 60+positionChangeX, 80+positionChangeY ); // this is the turtle's tail
+  fill(150, 50, 0); 
+  ellipse(150+positionChangeX, 70+positionChangeY, 200, 90); // this is the turtle's shell
+
+  noStroke(); //these are the top horizontal lines on the turtle's shell
+  fill(175, 60, 0);
+  beginShape();
+  vertex(50+positionChangeX, 65+positionChangeY);
+  vertex(90+positionChangeX, 80+positionChangeY);
+  vertex(130+positionChangeX, 85+positionChangeY);
+  vertex(170+positionChangeX, 85+positionChangeY);
+  vertex(210+positionChangeX, 80+positionChangeY);
+  vertex(250+positionChangeX, 65+positionChangeY);
+  vertex(240+positionChangeX, 90+positionChangeY);
+  vertex(215+positionChangeX, 100+positionChangeY);
+  vertex(175+positionChangeX, 110+positionChangeY);
+  vertex(125+positionChangeX, 110+positionChangeY);
+  vertex(80+positionChangeX, 100+positionChangeY);
+  endShape(CLOSE);
+
+  fill(125, 40, 0); // these are the bottom horizontal lines on the turtle's shell
+  beginShape();
+  vertex(80+positionChangeX, 40+positionChangeY);
+  vertex(110+positionChangeX, 50+positionChangeY);
+  vertex(140+positionChangeX, 55+positionChangeY);
+  vertex(170+positionChangeX, 55+positionChangeY);
+  vertex(200+positionChangeX, 50+positionChangeY);
+  vertex(225+positionChangeX, 40+positionChangeY);
+  vertex(150+positionChangeX, 25+positionChangeY);
+  endShape(CLOSE);
+
+  strokeWeight(1); // these are the left-most lines on the turtle's shell
+  stroke(0);
+  line(50+positionChangeX, 65+positionChangeY, 90+positionChangeX, 80+positionChangeY);
+  line(90+positionChangeX, 80+positionChangeY, 130+positionChangeX, 85+positionChangeY);
+  line(130+positionChangeX, 85+positionChangeY, 170+positionChangeX, 85+positionChangeY);
+  line(170+positionChangeX, 85+positionChangeY, 210+positionChangeX, 80+positionChangeY);
+  line(210+positionChangeX, 80+positionChangeY, 250+positionChangeX, 65+positionChangeY);
+
+  line(80+positionChangeX, 40+positionChangeY, 110+positionChangeX, 50+positionChangeY); // these are the second to the left-most lines on the turtle's shell
+  line(110+positionChangeX, 50+positionChangeY, 140+positionChangeX, 55+positionChangeY);
+  line(140+positionChangeX, 55+positionChangeY, 170+positionChangeX, 55+positionChangeY);
+  line(170+positionChangeX, 55+positionChangeY, 200+positionChangeX, 50+positionChangeY);
+  line(200+positionChangeX, 50+positionChangeY, 225+positionChangeX, 40+positionChangeY);
+
+  line(150+positionChangeX, 25+positionChangeY, 105+positionChangeX, 50+positionChangeY); // these are the third to the left-most lines on the turtle's shell
+  line(105+positionChangeX, 50+positionChangeY, 85+positionChangeX, 80+positionChangeY);
+  line(85+positionChangeX, 80+positionChangeY, 80+positionChangeX, 100+positionChangeY);
+
+  line(150+positionChangeX, 25+positionChangeY, 135+positionChangeX, 55+positionChangeY); // these are the third to the right-most lines on the turtle's shell
+  line(135+positionChangeX, 55+positionChangeY, 125+positionChangeX, 85+positionChangeY);
+  line(125+positionChangeX, 85+positionChangeY, 125+positionChangeX, 110+positionChangeY);
+
+  line(150+positionChangeX, 25+positionChangeY, 170+positionChangeX, 55+positionChangeY); // these are the second to the right-most lines on the turtle's shell
+  line(170+positionChangeX, 55+positionChangeY, 175+positionChangeX, 85+positionChangeY);
+  line(175+positionChangeX, 85+positionChangeY, 175+positionChangeX, 110+positionChangeY);
+
+  line(150+positionChangeX, 25+positionChangeY, 200+positionChangeX, 50+positionChangeY); // these are the right-most lines on the turtle's shell
+  line(200+positionChangeX, 50+positionChangeY, 210+positionChangeX, 80+positionChangeY);
+  line(210+positionChangeX, 80+positionChangeY, 215+positionChangeX, 100+positionChangeY);
+
+  stroke(125);
+  strokeWeight(5);
+  fill(125);
+  ellipse(270+positionChangeX, 75+positionChangeY, 70, 50); // the plastic bag is on the turtle's head
+  noFill();
+  ellipse(235+positionChangeX, 75+positionChangeY, 70, 50);
+
+  noStroke();
+  fill(125);
+  ellipse(650, 500, 350, 400); // this is the cave
+  fill(0);
+  ellipse(550, 500, 100, 200); // this is the entrance to the cave
+
+  fill(0, 0, 255); // this is what moves the first 'fish eraser' from its original position, to being the 'Play game' button
+  rect(fishX-225, 50, 150, 50);
+  fill(255);
+  rect(275, 150, 250, 50);
+
+  textSize(36); // this is what displays 'Play game'
+  fill(0);
+  text("Play game", 345, 185);
+
+  fill(0, 0, 255); // this is what moves the second 'fish eraser' from its original position, to being the 'Instructions' button
+  rect(fishX-125, 150, 150, 50);
+  fill(255);
+  rect(275, 225, 250, 50);
+
+  textSize(36); // this is what displays 'Instructions'
+  fill(0);
+  text("Instructions", 335, 260);
+
+  fill(255);
+  rect(275, 300, 250, 50);
+
+  textSize(36); // this is what displays 'Exit'
+  fill(0);
+  text("Exit", 380, 335);
+
+  textSize(75); // this is what displays 'SAVE THE TURTLE'
+  fill(0);
+  text("SAVE THE TURTLE", 190, 125);
+}
+
+void instructions() {
+  fill(255);
+  rect(0, 0, 800, 500);
+  textSize(36); // these are the instructions
+  fill(0);
+  text("Instructions", 300, 100);
+  textSize(18);
+  text("To move the turtle through the maze, use your arrow keys. As you pass through each", 50, 150);
+  text("object in the maze, a fact related to turtles will appear. You must pass through", 50, 180);
+  text(" every object in the maze (fish, plastic, etc.) in order to exit the maze, but be ", 50, 210);
+  text("careful not to crash into any walls! Once you finish the maze, you will have a quiz", 50, 240);
+  text(" on the information, learned in the maze. Click HERE on screen to continue to the", 50, 270);
+  text("Maze of Learning. After You complete the maze, you will proceed to the game of ", 50, 300);
+  text("testing. The turtle will be swimming through an ocean filled with food and plastic.", 50, 330); // this is where the user can continue to the maze of learning
+  text("Make sure not to let the turtle ingest any plastic! If you do, your score will go", 50, 360);
+  text(" down! Remember that the longer you survive, the faster the water moves!", 50, 390);
+  textSize(14);
+  text("Click here to go back to the main menu", 500, 450); // this is where the user can go back to the main menu
+}
+
+void mousePressed() {
+  if (mouseX >= 275 && mouseX <=525 && mouseY>= 225 && mouseY <=275 && state.equals("main menu")) { // this checks to see if the user clicked on 'Instructions'
+    state = "instructions";
+  }
+  if (mouseX >= 500 && mouseX <=775 && mouseY>=435 && mouseY<=455 && state.equals("instructions")) { // this checks to see if the user clicked 'here' to go to the main menu
+    state = "main menu";
+  }
+  if (mouseX >= 155 && mouseX <=210 && mouseY>= 425 && mouseY <=460 && state.equals("goodbye")) { // this checks to see if the user clicked 'HERE' to return to the main menu
+    state = "main menu";
+  }
+  if (mouseX >= 275 && mouseX <=525 && mouseY>=150 && mouseY<=200 && state.equals("main menu")) { // this checks to see if the user clicked 'Play game' to go to the maze of learning
+    state = "maze of learning";
+  }
+  if (mouseX >= 335 && mouseX <=380 && mouseY>=357 && mouseY<=372 && state.equals("instructions")) { // this checks to see if the user clicked 'HERE' to go to the maze of learning
+    state = "maze of learning";
+  }
+  if (mouseX >= 155 && mouseX <=210 && mouseY>= 425 && mouseY <=460 && state.equals("learning station 1")||state.equals("learning station 2")||state.equals("learning station 3")||state.equals("learning station 4")||state.equals("learning station 5")) { // this checks to see if the user clicked 'HERE' at the stations of learning to continue in the maze
+    if (state.equals("learning station 2")) {
+      right+=125;
+    } else if (state.equals("learning station 3")) {
+      down+=100;
+    } else if (state.equals("learning station 5")) {
+      up-=100;
+    } else {
+      right+=90;
+    }
+    state = "maze of learning";
+  }
+  if (mouseX >= 275 && mouseX <=525 && mouseY >= 300 && mouseY <= 350 && state.equals("main menu")) { // this checks to see if the user clicked on 'Exit'
+    state = "goodbye";
+  }
+}
+
+void mazeOfLearning() {
+  noStroke(); // this is the maze
+  background(0, 0, 255);
+  fill(0);
+  rect(50, 50, 200, 50);
+  rect(50, 100, 50, 100);
+  rect(0, 200, 100, 50);
+  rect(50, 250, 50, 150);
+  rect(100, 350, 100, 50);
+  rect(100, 400, 50, 100);
+  rect(150, 450, 150, 50);
+  rect(250, 200, 50, 250);
+  rect(150, 150, 50, 200);
+  rect(200, 150, 200, 50);
+  rect(200, 150, 80, 50);
+  rect(250, 200, 50, 100);
+  rect(300, 250, 50, 50);
+  rect(350, 50, 100, 50);
+  rect(400, 100, 50, 100);
+  rect(450, 150, 50, 250);
+  rect(350, 350, 100, 50);
+  rect(350, 400, 50, 100);
+  rect(400, 450, 300, 50);
+  rect(500, 300, 100, 50);
+  rect(550, 50, 150, 50);
+  rect(550, 100, 50, 300);
+  rect(650, 250, 50, 200);
+  rect(700, 350, 50, 50);
+  rect(650, 200, 150, 50);
+
+  noStroke(); // this is the turtle
+  fill(0, 255, 0);
+  ellipse(20+left+right, 223+up+down, 25, 13); // this is the turtle's body
+  triangle(25+left+right, 227+up+down, 30+left+right, 232+up+down, 15+left+right, 237+up+down); // this is the turtle's front fin
+  triangle(7+left+right, 222+up+down, 15+left+right, 225+up+down, 0+left+right, 233+up+down); // this is the turtle's back fin
+  triangle(0+left+right, 220+up+down, 5+left+right, 220+up+down, 8+left+right, 223+up+down); // this is the turtle's tail
+  fill(150, 50, 0); 
+  ellipse(20+left+right, 220+up+down, 25, 12); // this is the turtle's shell
+  fill(0, 255, 0);
+  ellipse(35+left+right, 225+up+down, 9, 7); // this is the turtle's head
+  fill(0);
+  ellipse(35+left+right, 223+up+down, 2, 2); // this is the black part of the turtle's eye
+  strokeWeight(1);
+  stroke(127);
+  line(33+left+right, 225+up+down, 35+left+right, 227+up+down); // this is the tilted part of the turtle's smile
+  line(35+left+right, 227+up+down, 38+left+right, 227+up+down); // this is the straight part of the turtle's smie
+
+  fill(0, 255, 255); // this is the fish; the first station of learning
+  ellipse(125, 375, 40, 20);
+  triangle(105, 375, 95, 385, 95, 365);
+  fill(0);
+  ellipse(130, 372, 5, 5);
+
+  fill(255); // this is the plastic water bottle; the second station of learning
+  rect(400, 170, 10, 20);
+  fill(200, 225, 255);
+  rect(330, 165, 70, 30, 10, 10, 10, 10);
+  stroke(0);
+  strokeWeight(1);
+  line(350, 165, 350, 195);
+  line(370, 165, 370, 195);
+
+  fill(255, 200, 255); // this is the jellyfish; the third station of learning
+  ellipse(475, 300, 40, 30);
+  noFill();
+  stroke(255, 200, 255);
+  strokeWeight(2);
+  bezier(485, 305, 440, 310, 480, 370, 455, 360);
+  bezier(490, 305, 450, 310, 485, 370, 460, 360);
+  bezier(485, 305, 470, 310, 490, 370, 475, 360);
+  bezier(490, 305, 485, 310, 465, 370, 485, 360);
+  bezier(490, 305, 500, 310, 470, 370, 490, 360);
+
+  stroke(255, 200, 255); // this is the worm; the fourth station of learning
+  strokeWeight(5);
+  bezier(500, 490, 500, 450, 550, 500, 550, 465);
+
+  noStroke(); // this is the plastic bag; the last station of learning
+  fill(175);
+  ellipse(675, 400, 20, 40);
+  noFill();
+  stroke(175);
+  strokeWeight(2);
+  arc(675, 390, 17, 40, radians(180), radians(360));
+} 
+
+void learningStation1() {
+  background(255);
+  PFont font;
+  fill(0);
+  font = loadFont("BodoniMTCondensed-Italic-36.vlw");
+  textFont(font);
+  text("Sea turtles often mistake plastic and garbage ", 150, 250); // this is the body text
+  text("as jellyfish, and end up eating it. This causes", 150, 280);
+  text("problems in their digestive system and increases", 150, 310);
+  text("their chances of death significantly. The", 150, 340);
+  text("plastic can make the turtles feel full, and they", 150, 370);
+  text("can starve to death.", 150, 400);
+  text("Click HERE to continue on the maze.", 100, 450);
+  PFont title;
+  fill(0, 0, 255);
+  title = loadFont("BodoniMTCondensed-Italic-72.vlw");
+  textFont(title);
+  text("Plastic's Impact", 175, 150); // this is the title
+}
+
+void learningStation2() {
+  background(255);
+  PFont font;
+  font = loadFont("BodoniMTCondensed-Italic-36.vlw");
+  fill(0);
+  textFont(font);
+  text("The amount of plastic that would fit in a", 150, 250); // this is the body text
+  text("garbage truck is dumped into the ocean every", 150, 280);
+  text("minute. By 2050 it will be 4 trucks per minute.", 150, 310);
+  text("This means that in 2050, there will be more ", 150, 340);
+  text("plastic in the oceans than fish.", 150, 370);
+  text("Click HERE to continue on the maze.", 100, 450);
+  PFont title;
+  fill(0, 0, 255);
+  title = loadFont("BodoniMTCondensed-Italic-72.vlw");
+  textFont(title);
+  text("Plastic and the Oceans", 150, 150); // this is the title
+}
+
+void learningStation3() {
+  background(255);
+  PFont font;
+  font = loadFont("BodoniMTCondensed-Italic-36.vlw");
+  fill(0);
+  textFont(font);
+  text("About 52% of sea turtles have consumed some", 150, 250); // this is the body text
+  text("sort of plastic. A turtle has a 20% chance ", 150, 280);
+  text("of dying if it has eaten one piece of plastic.", 150, 310);
+  text(" If it has eaten 14 pieces of plastic, it has", 150, 340);
+  text("a 50% chance of mortality.", 150, 370);
+  text("Click HERE to continue on the maze.", 100, 450);
+  PFont title;
+  fill(0, 0, 255);
+  title = loadFont("BodoniMTCondensed-Italic-72.vlw");
+  textFont(title);
+  text("Plastic & Sea Turtles", 150, 150); // this is the title
+}
+
+void learningStation4() {
+  background(255);
+  PFont font;
+  font = loadFont("BodoniMTCondensed-Italic-36.vlw");
+  fill(0);
+  textFont(font);
+  text("Three everyday things you can do to help ", 150, 250); // this is the body text
+  text("reduce plastic in oceans and help save ", 150, 280);
+  text("the turtles are: use a reusable waterbottle", 150, 310);
+  text(" and shopping bags, use a metal or paper straw, ", 150, 340);
+  text("and remember to REUSE and RECYCLE.", 150, 370);
+  text("Click HERE to continue on the maze.", 100, 450);
+  PFont title;
+  fill(0, 0, 255);
+  title = loadFont("BodoniMTCondensed-Italic-72.vlw");
+  textFont(title);
+  text("What Can YOU Do?", 150, 150); // this is the title
+}
+
+void learningStation5() {
+  background(255);
+  PFont font;
+  font = loadFont("BodoniMTCondensed-Italic-36.vlw");
+  fill(0);
+  textFont(font);
+  text("Six out of the seven species of sea ", 150, 250); // this is the body text
+  text("turtles are classified as threatened or ", 150, 280);
+  text("endangered due to human actions.", 150, 310);
+  text(" and shopping bags, use a metal or paper straw, ", 150, 340);
+  text("and remember to REUSE and RECYCLE.", 150, 370);
+  text("Click HERE to continue on the maze.", 100, 450);
+  state = "maze of learning";
+  PFont title;
+  fill(0, 0, 255);
+  title = loadFont("BodoniMTCondensed-Italic-72.vlw");
+  textFont(title);
+  text("Our Impact", 150, 150); // this is the title
+}
+
+void mazeErrortrap() {
+  background(255, 0, 0);
+  PFont font;
+  font = loadFont("BodoniMTCondensed-Italic-36.vlw");
+  fill(255);
+  textFont(font);
+  text("OH NO!! You crashed into a wall.", 150, 250); // this is the message displayed when the user crashes into a wall
+  text("Click HERE to continue on the maze.", 200, 450);
+}
+
+void gameOfTesting() {
+  noStroke(); // this is the fish
+  fill(0, 255, 255);
+  ellipse(150+offScreen, 75, 100, 25); // this is the fish's body
+  triangle(225+offScreen, 50, 200+offScreen, 75, 225+offScreen, 100); // this is the fish's tail
+  fill(0, 0, 255);
+  triangle(150+offScreen, 75, 150+offScreen, 80, 170+offScreen, 75); // this is the fish's fin
+  noStroke();
+  fill(0);
+  ellipse(125+offScreen, 70, 5, 5); // this is the fish's eye
+
+  stroke(255, 200, 255); // this is the worm
+  strokeWeight(5);
+  noFill();
+  bezier(790+offScreen, 390, 790+offScreen, 350, 860+offScreen, 400, 860+offScreen, 365);
+
+  fill(255, 200, 255); // this is the jellyfish
+  ellipse(325+offScreen, 300, 40, 30); // this is its body
+  noFill();
+  stroke(255, 200, 255);
+  strokeWeight(2);
+  bezier(335+offScreen, 305, 290+offScreen, 310, 330+offScreen, 370, 255+offScreen, 360); // these are its tentacles
+  bezier(340+offScreen, 305, 300+offScreen, 310, 335+offScreen, 370, 260+offScreen, 360);
+  bezier(335+offScreen, 305, 320+offScreen, 310, 340+offScreen, 370, 275+offScreen, 360);
+  bezier(340+offScreen, 305, 335+offScreen, 310, 315+offScreen, 370, 285+offScreen, 360);
+  bezier(340+offScreen, 305, 350+offScreen, 310, 320+offScreen, 370, 290+offScreen, 360);
+
+  fill(200);
+  ellipse(550+offScreen, 250, 50, 75); // this is the plastic bag
+  noFill();
+  strokeWeight(5);
+  stroke(200);
+  arc(550+offScreen, 250, 45, 125, radians(180), radians(360)); // this is the handles of the plastic bag
+
+  fill(255); // this is the plastic watter bottle
+  rect(900+offScreen, 170, 10, 20); // this is the lid
+  fill(200, 225, 255);
+  rect(830+offScreen, 165, 70, 30, 10, 10, 10, 10); // this is the bottle
+  stroke(0);
+  strokeWeight(1);
+  line(850+offScreen, 165, 850+offScreen, 195);
+  line(870+offScreen, 165, 870+offScreen, 195);
+
+  if ((offScreen>160&&offScreen<180)&&(positionY>-10&&positionY<10)) { // this is what increases the score if the user turtle eats the fish
+    score+=1;
+  }
+  if ((offScreen>-65&&offScreen<-45)&&(positionY>215&&positionY<235)) { // this is what increases the score if the user turtle eats the jellyfish
+    score+=1;
+  }
+  if ((offScreen>-290&&offScreen<-270)&&(positionY>165&&positionY<185)) { // this is what decreases the score if the user eats the plasic bag
+    score-=1;
+  }
+  if ((offScreen>-530&&offScreen<-510)&&(positionY>305&&positionY<325)) { // this is what increases the score if the user eats the worm
+    score+=1;
+  }
+  if ((offScreen>-570&&offScreen<-550)&&(positionY>95&&positionY<115)) {// this is what decreases the score if the user eats the plastic waterbottle
+    score-=1;
+  }
+  noStroke(); // this is the turtle
+  fill(0, 255, 0);
+  ellipse(150, 75+positionY, 200, 100); // this is the turtle's body
+  triangle(180, 100+positionY, 200, 130+positionY, 130, 150+positionY ); // this is the turtle's front fin
+  triangle(50, 80+positionY, 80, 90+positionY, 20, 120+positionY ); // this is the turtle's back fin
+  triangle(30, 70+positionY, 50, 70+positionY, 60, 80+positionY ); // this is the turtle's tail
+  fill(150, 50, 0); 
+  ellipse(150, 70+positionY, 200, 90); // this is the turtle's shell
+
+  noStroke(); //these are the top horizontal lines on the turtle's shell
+  fill(175, 60, 0);
+  beginShape();
+  vertex(50, 65+positionY);
+  vertex(90, 80+positionY);
+  vertex(130, 85+positionY);
+  vertex(170, 85+positionY);
+  vertex(210, 80+positionY);
+  vertex(250, 65+positionY);
+  vertex(240, 90+positionY);
+  vertex(215, 100+positionY);
+  vertex(175, 110+positionY);
+  vertex(125, 110+positionY);
+  vertex(80, 100+positionY);
+  endShape(CLOSE);
+
+  fill(125, 40, 0); // these are the bottom horizontal lines on the turtle's shell
+  beginShape();
+  vertex(80, 40+positionY);
+  vertex(110, 50+positionY);
+  vertex(140, 55+positionY);
+  vertex(170, 55+positionY);
+  vertex(200, 50+positionY);
+  vertex(225, 40+positionY);
+  vertex(150, 25+positionY);
+  endShape(CLOSE);
+
+  strokeWeight(1); // these are the left-most lines on the turtle's shell
+  stroke(0);
+  line(50, 65+positionY, 90, 80+positionY);
+  line(90, 80+positionY, 130, 85+positionY);
+  line(130, 85+positionY, 170, 85+positionY);
+  line(170, 85+positionY, 210, 80+positionY);
+  line(210, 80+positionY, 250, 65+positionY);
+
+  line(80, 40+positionY, 110, 50+positionY); // these are the second to the left-most lines on the turtle's shell
+  line(110, 50+positionY, 140, 55+positionY);
+  line(140, 55+positionY, 170, 55+positionY);
+  line(170, 55+positionY, 200, 50+positionY);
+  line(200, 50+positionY, 225, 40+positionY);
+
+  line(150, 25+positionY, 105, 50+positionY); // these are the third to the left-most lines on the turtle's shell
+  line(105, 50+positionY, 85, 80+positionY);
+  line(85, 80+positionY, 80, 100+positionY);
+
+  line(150, 25+positionY, 135, 55+positionY); // these are the third to the right-most lines on the turtle's shell
+  line(135, 55+positionY, 125, 85+positionY);
+  line(125, 85+positionY, 125, 110+positionY);
+
+  line(150, 25+positionY, 170, 55+positionY); // these are the second to the right-most lines on the turtle's shell
+  line(170, 55+positionY, 175, 85+positionY);
+  line(175, 85+positionY, 175, 110+positionY);
+
+  line(150, 25+positionY, 200, 50+positionY); // these are the right-most lines on the turtle's shell
+  line(200, 50+positionY, 210, 80+positionY);
+  line(210, 80+positionY, 215, 100+positionY);
+
+  noStroke();
+  fill(0, 255, 0);
+  arc(270, 75+positionY, 75, 50, radians(20), radians(340));
+  fill(0);
+  ellipse(260, 70+positionY, 15, 15); // this is the black part of the turtle's eye
+  fill(255);
+  ellipse(260, 75+positionY, 10, 5); // this is the white part of the turtle's eye
+
+  fill(0, 75, 0); // this is the chalkboard that displays the score
+  rect(20, 0, 200, 100);
+  PFont font;
+  font = loadFont("BodoniMTCondensed-Italic-36.vlw");
+  fill(255);
+  textFont(font);
+  text("SCORE   "+score, 70, 60); // this is how the score is displayed
+}
+
+void goodbye() {
+  background(0, 0, 255);
+  PFont font;
+  font = loadFont("BodoniMTCondensed-Italic-36.vlw");
+  fill(255);
+  textFont(font);
+  text("Thank you for playing my game! You ", 200, 250); // this is the body text
+  text("made it to level "+offScreenCounter+" and your final", 200, 280);
+  text("score is "+score + ".", 200, 310);
+}
